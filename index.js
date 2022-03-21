@@ -1,11 +1,15 @@
 /* eslint-disable max-classes-per-file */
-/* eslint-disable no-unused-vars */
 /* eslint-disable no-use-before-define */
 
-// modules imports
+// custom modules imports
 import { deleteBookFromUI } from './modules/deleteBookFromUI.js';
 import { deleteBookFromLS } from './modules/deleteBookFromLS.js';
 import { addBookToUI } from './modules/addBookToUI.js';
+import { getElements } from './modules/bodyLoad.js';
+
+// luxon library
+import { DateTime } from './modules/luxon/src/luxon.js';
+import { navigation } from './modules/navigation.js';
 
 class Store {
   // getting books from LS
@@ -28,6 +32,7 @@ class Store {
   // removing books from local storage
   static removeBook(ID) {
     const storedBooks = Store.getBooks();
+    // imported
     deleteBookFromLS(ID, storedBooks);
   }
 }
@@ -55,6 +60,7 @@ class UI {
 
   // adding book to list
   static addBookToList(storedBook) {
+    // imported
     addBookToUI(storedBook);
   }
 
@@ -106,74 +112,20 @@ document.getElementById('booklist-container').addEventListener('click', (e) => {
 });
 
 // date and time
-function time() {
-  const date = new Date();
-  const locale = navigator.language;
-  const options = {
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric',
-    hour: 'numeric',
-    minute: 'numeric',
-    second: 'numeric',
-    hour12: 'false',
-  };
-  const myDate = date.toLocaleTimeString(locale, options);
-  document.getElementById('date-and-time').textContent = myDate;
-}
-
-setInterval(time, 1000);
+const displayTime = () => {
+  document.getElementById('date-and-time').innerHTML = DateTime.now().toLocaleString(DateTime.DATETIME_MED_WITH_SECONDS);
+};
+setInterval(displayTime, 1000);
 
 // body onload
 document.getElementById('body').onload = () => {
-  document.getElementById('booklist-container').style.display = 'flex';
-  document.getElementById('addBooks-form').style.display = 'none';
-  document.getElementById('contact-section').style.display = 'none';
+  getElements();
 };
-
-// getting links
-const list = document.getElementById('list');
-const form = document.getElementById('form');
-const contact = document.getElementById('contact');
 
 // getting all links and applying click event
 const links = document.querySelectorAll('.links');
 links.forEach((link) => {
   link.addEventListener('click', (e) => {
-    const clickedElement = e.target;
-    const elementID = e.target.id;
-    switch (elementID) {
-      case 'list':
-        document.getElementById('booklist-container').style.display = 'flex';
-        document.getElementById('addBooks-form').style.display = 'none';
-        document.getElementById('contact-section').style.display = 'none';
-        clickedElement.classList.add('active');
-        form.classList.remove('active');
-        contact.classList.remove('active');
-        break;
-      case 'form':
-        document.getElementById('addBooks-form').style.display = 'flex';
-        document.getElementById('booklist-container').style.display = 'none';
-        document.getElementById('contact-section').style.display = 'none';
-        clickedElement.classList.add('active');
-        list.classList.remove('active');
-        contact.classList.remove('active');
-        break;
-      case 'contact':
-        document.getElementById('addBooks-form').style.display = 'none';
-        document.getElementById('booklist-container').style.display = 'none';
-        document.getElementById('contact-section').style.display = 'flex';
-        clickedElement.classList.add('active');
-        list.classList.remove('active');
-        form.classList.remove('active');
-        break;
-      default:
-        document.getElementById('booklist-container').style.display = 'flex';
-        document.getElementById('addBooks-form').style.display = 'none';
-        document.getElementById('contact-section').style.display = 'none';
-        clickedElement.classList.add('active');
-        form.classList.remove('active');
-        contact.classList.remove('active');
-    }
+    navigation(e);
   });
 });
