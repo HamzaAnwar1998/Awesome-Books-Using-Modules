@@ -8,7 +8,7 @@ import { addBookToUI } from './modules/addBookToUI.js';
 import { getElements } from './modules/bodyLoad.js';
 
 // luxon library
-import { DateTime } from './modules/luxon/src/luxon.js';
+import { DateTime } from './node_modules/luxon/src/luxon.js';
 import { navigation } from './modules/navigation.js';
 
 class Store {
